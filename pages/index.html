@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <link rel="stylesheet" href="../styles/style.css">
+        <script src="../scripts/draw.js"></script>
+        <title>Create T-Shirts</title>
+    </head>
+    <body>
+        <div id="mainColumn">
+            <canvas id="showPreview" width="600" height="800"></canvas>
+            <input id="fileInput" type="file" accept=".txt" multiple>
+            <input id="createImage" type="button" value="Create Image" onclick="createImages()">
+        </div>
+        <div id="secondaryColumn">
+            <label for="exampleText">Example Text: </label>
+            <input id="exampleText" type="text" value="Lorem Ipsum Etcetera Etecetera Ad Nauseum">
+            <label for="fontSize">Font Size: </label>
+            <input id="fontSize" type="number" value="50">
+            <label for="marginWidth">Margin Left & Right (px): </label>
+            <input id="marginWidth" type="number" value="50">
+            <label for="marginTop">Margin Top (px): </label>
+            <input id="marginTop" type="number" value="300">
+            <label for="spacing">Line Spacing (px): </label>
+            <input id="spacing" type="number" value="0">
+            <label for="font">Fonts:</label>
+            <select name="font" id="font">
+                
+            </select>
+            <button type="button" onclick="addCP()">Add Colour</button>
+            <div id="colour-pickers">
+                <input id="colour1" type="color" class="color">
+            </div>
+            <input id="updateImage" type="button" value="Update Image" onclick="createVisibleCanvas()">     
+        </div>
+    </body>
+</html>

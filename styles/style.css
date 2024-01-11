@@ -1,0 +1,80 @@
+html{
+    height: 100%
+}
+
+body{
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    min-width: 100%;
+    min-height: 100%;
+    overflow-y: scroll;
+}
+
+#mainColumn{
+    margin: 0;
+    width: calc(50% + 300px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+#secondaryColumn{
+    margin-top: 400px;
+    margin-left: 50px;
+    margin-right: 50px;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#imageCreator{
+    width: 6000px;
+    height: 8000px;
+    display: none;
+}
+
+#showPreview{
+    width: 600px;
+    height: 800px;
+    margin-top: 50px;
+    border-color: black;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 10px;
+}
+
+#fileInput{
+    margin-right: 175px;
+    margin-top: 20px;
+    height:30px;
+}
+
+#createImage{
+    margin-right: 275px;
+    margin-top: 20px;
+    height:30px;
+}
+
+#updateImage{
+    margin-top: 10px;
+}
+
+#download{
+    display: none;
+}
+
+#colour-pickers{
+    padding: 5%;
+    display:flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.color{
+    width:20px
+}

@@ -1,0 +1,20 @@
+{
+  "name": "bulk-image-creator",
+  "version": "1.0.0",
+  "description": "This application can be used to generate images using a simple template and input text.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "bulk",
+    "image",
+    "creator"
+  ],
+  
+  "author": "Sten Healey",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "electron": "^28.1.3"
+  }
+}
