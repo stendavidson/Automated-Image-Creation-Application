@@ -50,8 +50,8 @@ async function retrieveFonts(event){
             `
         }
 
-            // Display the page once the page is finished loading
-            document.body.style.display = "flex";
+        // Display the page once the page is finished loading
+        document.body.style.display = "flex";
     };
 
     xhttp.open("GET","https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyAmj41u9TC_on8VFIsj6hpPa-myxYKXxJ4");
@@ -62,11 +62,13 @@ async function retrieveFonts(event){
  * This method adds a new colour picker to the software configurator.
  */
 function addCP(){
+
     const colourPickers = document.getElementById("colour-pickers");
     const newColourPicker = document.createElement("input",);
     newColourPicker.setAttribute("class", "color");
     newColourPicker.setAttribute("type", "color");
-    colourPickers.appendChild(newColourPicker);            
+    colourPickers.appendChild(newColourPicker); 
+               
 }
 
 /**
