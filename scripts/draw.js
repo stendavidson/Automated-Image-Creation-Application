@@ -1,9 +1,4 @@
 /**
- * Event listners
- */
-document.addEventListener("DOMContentLoaded", retrieveFonts);
-
-/**
  * This function sets the google font to be used by the image
  * configurator.
  * 
@@ -40,14 +35,17 @@ async function retrieveFonts(event){
     const xhttp = new XMLHttpRequest();
 
     xhttp.onload = function(){
+
         const jsonData = JSON.parse(this.responseText)["items"];
         
         // The loop adds each option
         for(i in jsonData){
+
             fontList.innerHTML += 
             `
             <option value="${jsonData[i].family}">${jsonData[i].family}</option>
             `
+
         }
 
         // Display the page once the page is finished loading
@@ -74,7 +72,7 @@ function addCP(){
 /**
  * This method downloads the image held by the specified canvas element.
  * 
- * @param {*} canvas The canvas element from which an image should be
+ * @param {HTMLCanvasElement} canvas The canvas element from which an image should be
  * downloaded.
  * 
  * @param {number} number The unique identifier of the image being 
@@ -82,14 +80,21 @@ function addCP(){
  */
 function downloadCanvasImage(canvas, number){
 
+    // New download link element created
     const a = document.createElement("a");
     a.download = number+".png";
     document.body.appendChild(a);
+
+    // File downloaded
     canvas.toBlob(function(blob){
         const url = URL.createObjectURL(blob);
         a.href = url;
+
+        console.log(blob.text());
         a.click();
     })
+
+    // Donwload link removed
     document.body.removeChild(a);
 }
 
@@ -106,39 +111,31 @@ function downloadCanvasImage(canvas, number){
  */
 async function createInvisibleCanvas(text, num){
 
+    // css stylesheet link retrieved
     const url = useFont();
 
-    // Retrieve woff url
-    let response = await fetch(url);
-    response = await response.text();
-    const woffArray = Array.from(response.matchAll(/url\(.*\)/g));
+    // Retrieve .woff url(s)
+    const response = await fetch(url);
+    let textResponse = null;
+    let woffArray = null;
 
-    // Canvas Elements
-    const imageCreator = document.createElement("canvas");
-    imageCreator.width = 6000;
-    imageCreator.height = 8000;
-    imageCreator.style = "width: 6000px; height: 8000px; display: none";
-    document.body.appendChild(imageCreator);
-
-    // Input Elements
-    const fontSizeElement = document.getElementById("fontSize");
-    const fontElement = document.getElementById("font");
-    const marginWidthElement = document.getElementById("marginWidth");
-    const marginTopElement = document.getElementById("marginTop");
-    const spacingElement = document.getElementById("spacing");
+    if(response != null){
+        textResponse = await response.text();
+    }
+    
+    if(textResponse != null){
+        woffArray = Array.from(textResponse.matchAll(/url\(.*\)/g));
+    }    
 
     // Get Data From Fields
-    const fontSize = fontSizeElement.value;
-    const font = fontElement.value;
-    const marginWidth = marginWidthElement.value;
-    const marginTop = marginTopElement.value;
-    const spacing = spacingElement.value;
+    const fontSize = document.getElementById("fontSize").value;
+    const font = document.getElementById("font").value;
+    const marginWidth = document.getElementById("marginWidth").value;
+    const marginTop = document.getElementById("marginTop").value;
+    const spacing = document.getElementById("spacing").value;
 
     // Scaling Factor
-    const scale = 10;
-
-    // Canvas Context
-    const imageCreatorContext = imageCreator.getContext("2d");
+    const scale = 10;    
     
     // Temporary Calculation Variables
     let width = 0;
@@ -150,77 +147,90 @@ async function createInvisibleCanvas(text, num){
     let words = text.split(" ");
     let rowNum = 0;
 
-    // Load font
+    // Load font(s)
     for(let i=0; i<woffArray.length; i++){
         const loader = new FontFace(font, woffArray[i]);
+
         await loader.load();
-        document.fonts.add(loader);
-        document.body.classList.add("fonts-loaded");
-    }
 
-    // Set Canvas Properties
-    imageCreatorContext.width = 6000;
-    imageCreatorContext.height = 8000;
-    imageCreatorContext.scale(scale, scale); 
-    imageCreatorContext.font = fontSize + "px " + font;
-    height = Math.round(imageCreatorContext.measureText("O")["width"]) + 15 + parseInt(spacing);
-
-
-    // This block generates a linear gradient for the text.           
-    const xStart = parseInt(marginWidth)/2;
-    const gradientVisible = imageCreatorContext.createLinearGradient(xStart, 0, 600 - xStart, 0);
-    const colourPickers = document.getElementById("colour-pickers");
-    const colours = colourPickers.childNodes;
-    
-    // This conditional block creates a custom gradient from the selected colors.
-    if(colours.length > 1){
-        for(let i=0; i<colours.length; i++){
-            if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
-                gradientVisible.addColorStop(i/(colours.length-1), colours[i].value);
-            }
-        }
-    }else{
-        for(let i=0; i<colours.length; i++){
-            if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
-                gradientVisible.addColorStop(0, colours[i].value);
-                gradientVisible.addColorStop(1, colours[i].value);
-            }
+        if(loader.status == "loaded"){
+            document.fonts.add(loader);
+            document.body.classList.add("fonts-loaded");
         }
     }
 
-    imageCreatorContext.fillStyle = gradientVisible;
+    // Canvas Elements & Context
+    const imageCreator = document.createElement("canvas");
+    const imageCreatorContext = imageCreator.getContext("2d");
+    imageCreator.width = 6000;
+    imageCreator.height = 8000;
+    imageCreator.style = "width: 6000px; height: 8000px; display: none";
+    document.body.appendChild(imageCreator);
+
+    if(imageCreatorContext != null){
+
+        // Set Canvas Context Properties
+        imageCreatorContext.width = 6000;
+        imageCreatorContext.height = 8000;
+        imageCreatorContext.scale(scale, scale); 
+        imageCreatorContext.font = fontSize + "px " + font;
+        height = Math.round(imageCreatorContext.measureText("O")["width"]) + 15 + parseInt(spacing);
     
-    // This block generates the image text according to the specified format
-    for(let i=0; i < words.length; i++){
-        if(imageCreatorContext.measureText(line + words[i])["width"] > 600 - parseInt(marginWidth)){
+        // This block generates a linear gradient for the text.           
+        const xStart = parseInt(marginWidth)/2;
+        const gradientVisible = imageCreatorContext.createLinearGradient(xStart, 0, 600 - xStart, 0);
+        const colours = document.getElementById("colour-pickers").childNodes;
+        
+        // This conditional block creates a custom gradient from the selected colors.
+        if(colours.length > 1){
+            for(let i=0; i<colours.length; i++){
+                if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
+                    gradientVisible.addColorStop(i/(colours.length-1), colours[i].value);
+                }
+            }
+        }else{
+            for(let i=0; i<colours.length; i++){
+                if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
+                    gradientVisible.addColorStop(0, colours[i].value);
+                    gradientVisible.addColorStop(1, colours[i].value);
+                }
+            }
+        }
+    
+        imageCreatorContext.fillStyle = gradientVisible;
+        
+        // This block generates the image text according to the specified format
+        for(let i=0; i < words.length; i++){
+            if(imageCreatorContext.measureText(line + words[i])["width"] > 600 - parseInt(marginWidth)){
+                width = imageCreatorContext.measureText(line)["width"]
+                leftOffset = Math.round((imageCreatorContext.width/scale - width)/2);
+                imageCreatorContext.fillText(line,leftOffset,50 + parseInt(marginTop) + rowNum*height);
+                rowNum++;
+                if(i+1 == words.length){
+                    line = words[i];
+                }else{
+                    line = words[i] + " ";
+                }
+            }else{
+                if(i+1 == words.length){
+                    line += words[i];
+                }else{
+                    line += words[i] + " ";
+                }
+            }
+        }
+        
+        if(line.length > 0){
             width = imageCreatorContext.measureText(line)["width"]
             leftOffset = Math.round((imageCreatorContext.width/scale - width)/2);
             imageCreatorContext.fillText(line,leftOffset,50 + parseInt(marginTop) + rowNum*height);
-            rowNum++;
-            if(i+1 == words.length){
-                line = words[i];
-            }else{
-                line = words[i] + " ";
-            }
-        }else{
-            if(i+1 == words.length){
-                line += words[i];
-            }else{
-                line += words[i] + " ";
-            }
         }
+    
+        // The download method is called after the image is created and then the 
+        // temporary is deleted.
+        downloadCanvasImage(imageCreator, num);
+        document.body.removeChild(imageCreator);
     }
-
-    if(line.length > 0){
-        width = imageCreatorContext.measureText(line)["width"]
-        leftOffset = Math.round((imageCreatorContext.width/scale - width)/2);
-        imageCreatorContext.fillText(line,leftOffset,50 + parseInt(marginTop) + rowNum*height);
-    }
-
-    // The download method is called after the image is created and then the 
-    // temporary is deleted.
-    downloadCanvasImage(imageCreator, num);
-    document.body.removeChild(imageCreator);
 }
 
 
@@ -228,7 +238,7 @@ async function createInvisibleCanvas(text, num){
  * This method generates a series of images based upon an input list of
  * quotes as provided by the user via a file.
  */
-function createImages(){
+function downloadImages(){
     
     // The file is retrieved
     const file = document.getElementById("fileInput").files[0];
@@ -236,6 +246,7 @@ function createImages(){
     
     // The file is read and split into lines
     reader.addEventListener("load", () => {
+
         const content = reader.result;
         const quotes = content.split("\n");
         
@@ -261,15 +272,21 @@ function createImages(){
  */
 async function createVisibleCanvas(){
 
+    // css url is retrieved
     const url = useFont();
 
-    // Retrieve woff url
-    let response = await fetch(url);
-    response = await response.text();
-    const woffArray = Array.from(response.matchAll(/url\(.*\)/g));
+    // Retrieve .woff url
+    const response = await fetch(url);
+    let textResponse = null;
+    let woffArray = null;
 
-    // Canvas Elements
-    const showPreview = document.getElementById("showPreview");
+    if(response != null){
+        textResponse = await response.text();
+    }
+    
+    if(textResponse != null){
+        woffArray = Array.from(textResponse.matchAll(/url\(.*\)/g));
+    }    
 
     // Input Elements
     const exampleElement = document.getElementById("exampleText");
@@ -286,9 +303,6 @@ async function createVisibleCanvas(){
     const marginWidth = marginWidthElement.value;
     const marginTop = marginTopElement.value;
     const spacing = spacingElement.value;
-
-    // Canvas Context
-    const showPreviewContext = showPreview.getContext("2d");
     
     // Temporary Calculation Variables
     let width = 0;
@@ -303,68 +317,92 @@ async function createVisibleCanvas(){
     // Load font
     for(let i=0; i<woffArray.length; i++){
         const loader = new FontFace(font, woffArray[i]);
+
         await loader.load();
-        document.fonts.add(loader);
-        document.body.classList.add("fonts-loaded");
-    }
 
-
-    // Set Canvas Properties
-    showPreviewContext.width = 600;
-    showPreviewContext.height = 800;
-    showPreviewContext.font = fontSize + "px " + font;
-    height = Math.round(showPreviewContext.measureText("O")["width"]) + 15 + parseInt(spacing);
-    showPreviewContext.clearRect(0,0,showPreviewContext.width, showPreviewContext.height);
-
-
-    const xStart = parseInt(marginWidth)/2;
-    const gradientVisible = showPreviewContext.createLinearGradient(xStart, 0, showPreviewContext.width - xStart, 0);
-    const colourPickers = document.getElementById("colour-pickers");
-    const colours = colourPickers.childNodes;
-    
-    // This conditional block creates a custom gradient from the selected colors.
-    if(colours.length > 1){
-        for(let i=0; i<colours.length; i++){
-            if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
-                gradientVisible.addColorStop(i/(colours.length-1), colours[i].value);
-            }
-        }
-    }else{
-        for(let i=0; i<colours.length; i++){
-            if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
-                gradientVisible.addColorStop(0, colours[i].value);
-                gradientVisible.addColorStop(1, colours[i].value);
-            }
+        if(loader.status == "loaded"){
+            document.fonts.add(loader);
+            document.body.classList.add("fonts-loaded");
         }
     }
 
-    showPreviewContext.fillStyle = gradientVisible;
+    const showPreview = document.getElementById("showPreview");
+    const showPreviewContext = showPreview.getContext("2d");
 
-    // This block generates the image text according to the specified format
-    for(let i=0; i < words.length; i++){
-        if(showPreviewContext.measureText(line + words[i])["width"] > 600 - parseInt(marginWidth)){
+    if(showPreviewContext){
+
+        // Set Canvas Context Properties
+        showPreviewContext.width = 600;
+        showPreviewContext.height = 800;
+        showPreviewContext.font = fontSize + "px " + font;
+        height = Math.round(showPreviewContext.measureText("O")["width"]) + 15 + parseInt(spacing);
+        showPreviewContext.clearRect(0,0,showPreviewContext.width, showPreviewContext.height);
+
+        const xStart = parseInt(marginWidth)/2;
+        const gradientVisible = showPreviewContext.createLinearGradient(xStart, 0, showPreviewContext.width - xStart, 0);
+        const colours = document.getElementById("colour-pickers").childNodes;
+
+        // This conditional block creates a custom gradient from the selected colors.
+        if(colours.length > 1){
+            for(let i=0; i<colours.length; i++){
+                if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
+                    gradientVisible.addColorStop(i/(colours.length-1), colours[i].value);
+                }
+            }
+        }else{
+            for(let i=0; i<colours.length; i++){
+                if(colours[i].nodeName.toLowerCase() == "input" && colours[i].type.toLowerCase() == "color"){
+                    gradientVisible.addColorStop(0, colours[i].value);
+                    gradientVisible.addColorStop(1, colours[i].value);
+                }
+            }
+        }
+
+        showPreviewContext.fillStyle = gradientVisible;
+
+        // This block generates the image text according to the specified format
+        for(let i=0; i < words.length; i++){
+            if(showPreviewContext.measureText(line + words[i])["width"] > 600 - parseInt(marginWidth)){
+                width = showPreviewContext.measureText(line)["width"]
+                leftOffset = Math.round((showPreviewContext.width - width)/2);
+                showPreviewContext.fillText(line,leftOffset,50 + parseInt(marginTop) + rowNum*height);
+                console
+                rowNum++;
+                if(i+1 == words.length){
+                    line = words[i];
+                }else{
+                    line = words[i] + " ";
+                }
+            }else{
+                if(i+1 == words.length){
+                    line += words[i];
+                }else{
+                    line += words[i] + " ";
+                }
+            }
+        }
+
+        if(line.length > 0){
             width = showPreviewContext.measureText(line)["width"]
             leftOffset = Math.round((showPreviewContext.width - width)/2);
             showPreviewContext.fillText(line,leftOffset,50 + parseInt(marginTop) + rowNum*height);
-            console
-            rowNum++;
-            if(i+1 == words.length){
-                line = words[i];
-            }else{
-                line = words[i] + " ";
-            }
-        }else{
-            if(i+1 == words.length){
-                line += words[i];
-            }else{
-                line += words[i] + " ";
-            }
         }
     }
-
-    if(line.length > 0){
-        width = showPreviewContext.measureText(line)["width"]
-        leftOffset = Math.round((showPreviewContext.width - width)/2);
-        showPreviewContext.fillText(line,leftOffset,50 + parseInt(marginTop) + rowNum*height);
-    }
 }
+
+/**
+ * Event listener for DOM Content Loaded
+ */
+document.addEventListener("DOMContentLoaded", retrieveFonts);
+
+/**
+ * Event listeners for user input
+ */
+document.addEventListener("DOMContentLoaded", function(){
+    const addColor = document.getElementById("addColor");
+    const updateImage = document.getElementById("updateImage");
+    const createImages = document.getElementById("createImages");
+    addColor.addEventListener("click", addCP);
+    updateImage.addEventListener("click", createVisibleCanvas);
+    createImages.addEventListener("click", downloadImages);
+});
