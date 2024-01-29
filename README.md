@@ -1,4 +1,4 @@
-# T-Shirt Creation App
+# Automated Image Creation App
 
 **Author:** Sten Healey
 
