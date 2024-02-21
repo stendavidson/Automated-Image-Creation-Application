@@ -4,13 +4,13 @@
         <link rel="stylesheet" href="../styles/style.css">
         <script src="../scripts/draw.js"></script>
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://www.googleapis.com https://fonts.gstatic.com">
-        <title>Create T-Shirts</title>
+        <title>Bulk Image Creator</title>
     </head>
     <body>
         <div id="mainColumn">
             <canvas id="showPreview" width="600" height="800"></canvas>
             <input id="fileInput" type="file" accept=".txt" multiple>
-            <input id="createImages" type="button" value="Create Image">
+            <input id="createImages" type="button" value="Create Image(s)">
         </div>
         <div id="secondaryColumn">
             <label for="exampleText">Example Text: </label>
@@ -25,11 +25,12 @@
             <input id="spacing" type="number" value="0">
             <label for="font">Fonts:</label>
             <select name="font" id="font">
-                
+                <!-- Fonts to be loaded dynamically -->
             </select>
             <button id="addColor" type="button">Add Colour</button>
             <div id="colour-pickers">
                 <input id="colour1" type="color" class="color">
+                <!-- Colour Pickers to be added dynamically -->
             </div>
             <input id="updateImage" type="button" value="Update Image">     
         </div>
