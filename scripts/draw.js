@@ -257,6 +257,8 @@ function downloadImages(){
 
         }
 
+        window.alert("Download(s) are complete.")
+
     }, false);
 
     if(file){
