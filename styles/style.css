@@ -31,12 +31,6 @@ body{
     justify-content: center;
 }
 
-#imageCreator{
-    width: 6000px;
-    height: 8000px;
-    display: none;
-}
-
 #showPreview{
     width: 600px;
     height: 800px;
@@ -56,6 +50,7 @@ body{
 #createImages{
     margin-right: 275px;
     margin-top: 20px;
+    margin-bottom: 50px;
     height:30px;
 }
 
