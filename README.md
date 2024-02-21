@@ -30,5 +30,5 @@ npm start
 
 ### **Version History** 
 
-* **_Version 0.1.00:_** This version represents the first basic version of the software as initially commited. Whilst functional, this software is not visually appealing or the full set of intended features. It also lacks Unit Testing or proper exception handling.
+* **_Version 1.0.0:_** This version represents the first basic version of the software as initially commited. Whilst functional, this software is not visually appealing or the full set of intended features. It also lacks Unit Testing or proper exception handling.
 
