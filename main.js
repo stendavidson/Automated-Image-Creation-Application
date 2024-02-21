@@ -11,12 +11,12 @@ const fs = require('fs')
  */
 function replaceFile(fileName, extension, num){
 
-  if(fs.existsSync(fileName + (num > 0 ? "(" + num + ")" : "") + extension)){
-    let newNumber = num + 1;
-    return replaceFile(fileName, extension, newNumber);
-  }else{
-    return fileName + (num > 0 ? "(" + num + ")" : "") + extension;
-  }
+	if(fs.existsSync(fileName + (num > 0 ? "(" + num + ")" : "") + extension)){
+		let newNumber = num + 1;
+		return replaceFile(fileName, extension, newNumber);
+	}else{
+		return fileName + (num > 0 ? "(" + num + ")" : "") + extension;
+	}
 }
 
 /**
@@ -25,79 +25,85 @@ function replaceFile(fileName, extension, num){
  */
 function createWindow(){
 
-  const win = new BrowserWindow({
-    show:false,
-    icon: 'icon.png',
-    titleBarOverlay: {
-      color: '#262626'
-    },
-    webPreferences: {
-      contextIsolation: true,
-      nodeIntegration: false,
-      nodeIntegrationInWorker: false
-    }
-  })
+	const win = new BrowserWindow({
+		show:false,
+		icon: 'icon.png',
+		titleBarOverlay: {
+			show: true,
+			color: '#262626'
+		},
+		webPreferences: {
+			contextIsolation: true,
+			nodeIntegration: false,
+			nodeIntegrationInWorker: false
+		}
+	})
 
-  win.setMenu(null)
-  win.loadFile('pages/index.html')
-  win.maximize()
-  win.focus()
+	win.setMenu(null)
+	win.loadFile('pages/index.html')
 
-  // File download issues
-  win.webContents.session.on('will-download', (event, item, webContents) => {
+	win.once('ready-to-show', () => {
+		win.show();
+		win.maximize();
+	});
 
-    console.log(item.getFilename());
+	// File download callbacks
+	win.webContents.session.on('will-download', (event, item, webContents) => {
 
-    const fileName = replaceFile('c:\\Users\\pelon\\Downloads\\Images\\' + item.getFilename().replace(".png", ""), ".png", 0);
-    
-    // Set the save path
-    item.setSavePath(fileName);
+		console.log(item.getFilename());
 
-    // Set callback for when an file is downloaded
-    item.on("updated", function(){
+		const fileName = replaceFile('c:\\Users\\pelon\\Downloads\\Images\\' + item.getFilename().replace(".png", ""), ".png", 0);
 
-      let total = item.getTotalBytes();
-      let received = item.getReceivedBytes()
+		// Set the save path
+		item.setSavePath(fileName);
 
-      if(total === 0){
-        win.setProgressBar(1);
-      }else{
-        win.setProgressBar(received/total);
-      }
-    })
+		// Set callback for when an file is downloaded
+		item.on("updated", function(){
 
-    // Set callback for when an file is finished downloading
-    item.on("done", function(){
+			let total = item.getTotalBytes();
+			let received = item.getReceivedBytes()
 
-      let increment = 1;
+			if(total === 0){
+				win.setProgressBar(1);
+			}else{
+				win.setProgressBar(received/total);
+			}
+		})
 
-      win.setProgressBar(increment);
+		// Set callback for when an file is finished downloading
+		item.on("done", function(){
 
-      const id = setInterval(function(){
+			let increment = 1;
 
-        increment = 0;
-        win.setProgressBar(increment);
+			win.setProgressBar(increment);
 
-        if(increment < 0){
-          clearInterval(id);
-        }
+			const id = setInterval(function(){
 
-      }, 400)
-    })
-  })
+				increment = 0;
+				win.setProgressBar(increment);
+
+				if(increment < 0){
+					clearInterval(id);
+				}
+
+			}, 400)
+		})
+	})
 }
 
+// Create callback to start the application.
 app.whenReady().then(() => {
 
-  createWindow()
+	createWindow()
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
+	app.on('activate', () => {
+		if (BrowserWindow.getAllWindows().length === 0) {
+			createWindow()
+		}
+	})
 })
 
+// Create call back to close application
 app.on('window-all-closed', () => {
-  app.quit()
+	app.quit()
 })
