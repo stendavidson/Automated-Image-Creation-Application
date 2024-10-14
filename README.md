@@ -32,4 +32,4 @@ npm start
 
 * **_Version 1.0.0:_** This version represents the first basic version of the software as initially commited. Whilst functional, this software is not visually appealing or the full set of intended features. It also lacks Unit Testing or proper exception handling.
 
-* **_ Coming Soon - Version 2.0.0:_** In Progress: This version is currently under development, it has undergone a thorough UI/UX design overhaul, will implement a saveable file structure to allow image templates to be saved for reuse. Exception handling and useability are being addressed as well.
+* **_Coming Soon - Version 2.0.0:_** In Progress: This version is currently under development, it has undergone a thorough UI/UX design overhaul, will implement a saveable file structure to allow image templates to be saved for reuse. Exception handling and useability are being addressed as well.
